@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:payflow/modules/themes/app_colors.dart';
-import 'package:payflow/modules/themes/app_images.dart';
-import 'package:payflow/modules/themes/app_text_styles.dart';
+import 'package:payflow/shared/themes/app_colors.dart';
+import 'package:payflow/shared/themes/app_images.dart';
+import 'package:payflow/shared/themes/app_text_styles.dart';
 
 class SocialLoginButton extends StatelessWidget {
   
@@ -17,7 +17,7 @@ class SocialLoginButton extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppColors.shape,
           borderRadius: BorderRadius.circular(5),
-          border: Border.fromBorderSide(
+          border: const Border.fromBorderSide(
             BorderSide(color: AppColors.stroke)
           )
         ),
