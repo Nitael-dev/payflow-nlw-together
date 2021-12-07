@@ -18,7 +18,7 @@ class _LoginPageState extends State<LoginPage> {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: Container(
+      body: SizedBox(
         height: size.height,
         width: size.width,
         child: Stack(
