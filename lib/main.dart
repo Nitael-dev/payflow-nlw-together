@@ -17,6 +17,7 @@ class _AppFirebaseState extends State<AppFirebase> {
   final Future<FirebaseApp> _initialization = Firebase.initializeApp();
 
   @override
+  
   Widget build(BuildContext context) {
     return FutureBuilder(
       // Initializae FlutterFire:
