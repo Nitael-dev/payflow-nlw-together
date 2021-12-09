@@ -35,7 +35,7 @@ class _AppFirebaseState extends State<AppFirebase> {
 
         // Once complete, show your application
         if (snapshot.connectionState == ConnectionState.done) {
-          return const AppWidget();
+          return AppWidget();
         }
 
         // Otherwise, show whilst waiting
