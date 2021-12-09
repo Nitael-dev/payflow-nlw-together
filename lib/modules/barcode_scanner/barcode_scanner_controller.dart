@@ -22,6 +22,7 @@ class BarcodeScannerController {
       );
       final cameraController =
           CameraController(camera, ResolutionPreset.max, enableAudio: false);
+      await cameraController.initialize();
       status = BarcodeScannerStatus.available(cameraController);
       scanWithCamera();
     } catch (e) {
@@ -57,7 +58,9 @@ class BarcodeScannerController {
 
       if (barcode != null && status.barcode.isEmpty) {
         status = BarcodeScannerStatus.barcode(barcode);
-        status.cameraController!.dispose();
+        if (status.cameraController != null) {
+          status.cameraController!.dispose();
+        }
       } else {
         getAvailableCameras();
       }
@@ -77,45 +80,55 @@ class BarcodeScannerController {
   }
 
   void listenCamera() {
-    if (status.cameraController!.value.isStreamingImages == false) {
-      status.cameraController!.startImageStream((cameraImage) async {
-        try {
-          final WriteBuffer allBytes = WriteBuffer();
-          for (Plane plane in cameraImage.planes) {
-            allBytes.putUint8List(plane.bytes);
-          }
-          final bytes = allBytes.done().buffer.asUint8List();
-          final Size imageSize =
-              Size(cameraImage.width.toDouble(), cameraImage.height.toDouble());
-          const InputImageRotation imageRotation =
-              InputImageRotation.Rotation_0deg;
-          final InputImageFormat inputImageFormat =
-              InputImageFormatMethods.fromRawValue(cameraImage.format.raw) ??
-                  InputImageFormat.NV21;
-          final planeData = cameraImage.planes.map(
-            (Plane plane) {
-              return InputImagePlaneMetadata(
-                  bytesPerRow: plane.bytesPerRow,
-                  height: plane.height,
-                  width: plane.width);
-            },
-          ).toList();
+    // if (status.cameraController != null){
+      if (status.cameraController!.value.isStreamingImages == false) {
+        status.cameraController!.startImageStream((cameraImage) async {
+          try {
+            final WriteBuffer allBytes = WriteBuffer();
+            for (Plane plane in cameraImage.planes) {
+              allBytes.putUint8List(plane.bytes);
+            }
+            final bytes = allBytes.done().buffer.asUint8List();
+            final Size imageSize =
+                Size(cameraImage.width.toDouble(), cameraImage.height.toDouble());
+            const InputImageRotation imageRotation =
+                InputImageRotation.Rotation_0deg;
+            final InputImageFormat inputImageFormat =
+                InputImageFormatMethods.fromRawValue(cameraImage.format.raw) ??
+                    InputImageFormat.NV21;
+            final planeData = cameraImage.planes.map(
+              (Plane plane) {
+                return InputImagePlaneMetadata(
+                    bytesPerRow: plane.bytesPerRow,
+                    height: plane.height,
+                    width: plane.width);
+              },
+            ).toList();
 
-          final inputImageData = InputImageData(
-            size: imageSize,
-            imageRotation: imageRotation,
-            inputImageFormat: inputImageFormat,
-            planeData: planeData,
-          );
-          final inputImageCamera = InputImage.fromBytes(
-              bytes: bytes, inputImageData: inputImageData);
-          await Future.delayed(const Duration(seconds: 3));
-          await scannerBarCode(inputImageCamera);
-        } catch (e) {
-          // ignore: avoid_print
-          print(e);
-        }
-      });
+            final inputImageData = InputImageData(
+              size: imageSize,
+              imageRotation: imageRotation,
+              inputImageFormat: inputImageFormat,
+              planeData: planeData,
+            );
+            final inputImageCamera = InputImage.fromBytes(
+                bytes: bytes, inputImageData: inputImageData);
+            await Future.delayed(const Duration(seconds: 15));
+            await scannerBarCode(inputImageCamera);
+          } catch (e) {
+            // ignore: avoid_print
+            print(e);
+          }
+        });
+      }
+    // }
+  }
+    
+  void dispose() {
+    statusNotifier.dispose();
+    barcodeScanner.close();
+    if (status.showCamera) {
+      status.cameraController!.dispose();
     }
   }
 }
