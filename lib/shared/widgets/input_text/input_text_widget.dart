@@ -14,9 +14,9 @@ class InputTextWidget extends StatelessWidget {
     Key? key,
     required this.label,
     required this.icon,
+    required this.onChanged,
     this.initialValue,
     this.validator, this.controller, 
-    required this.onChanged,
   }) : super(key: key);
 
   @override
@@ -30,6 +30,7 @@ class InputTextWidget extends StatelessWidget {
             initialValue: initialValue,
             style: TextStyles.input,
             validator: validator,
+            onChanged: onChanged,
             decoration: InputDecoration(
                 contentPadding: EdgeInsets.zero,
                 labelText: label,

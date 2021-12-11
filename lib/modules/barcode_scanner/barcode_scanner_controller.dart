@@ -95,7 +95,6 @@ class BarcodeScannerController {
                     width: plane.width);
               },
             ).toList();
-
             final inputImageData = InputImageData(
               size: imageSize,
               imageRotation: imageRotation,
